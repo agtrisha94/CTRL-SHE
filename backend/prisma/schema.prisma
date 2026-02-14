@@ -1,0 +1,187 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                   String                  @id @default(uuid())
+  email                String                  @unique
+  password             String
+  role                 Role                    @default(USER)
+  name                 String?
+  age                  Int?
+  heightCm             Float?
+  weightKg             Float?
+  bmi                  Float?
+  bmr                  Int?
+  tdee                 Int?
+  activityLevel        ActivityLevel?
+  goalType             GoalType?               @default(MAINTENANCE)
+  dietType             DietType?
+  country              String?
+  defaultCuisine       String?
+  isProfileComplete    Boolean                 @default(false)
+  createdAt            DateTime                @default(now())
+  updatedAt            DateTime                @updatedAt
+  baseCalorieTarget    Int?
+  carbTargetG          Int?
+  currentCalorieTarget Int?
+  fatTargetG           Int?
+  proteinTargetG       Int?
+  gender               Gender?
+  allergies            String[]
+  diseases             String[]
+  favorites            UserFavoriteRecipe[]
+  metricsHistory       UserMetricsHistory[]
+  preferredCuisines    UserPreferredCuisine[]
+  cookHistory          UserRecipeCookHistory[]
+  recipeStats          UserRecipeStats[]
+}
+
+model UserPreferredCuisine {
+  userId      String
+  cuisineName String
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, cuisineName])
+}
+
+model Recipe {
+  id             String                  @id
+  name           String
+  description    String?
+  cuisine        String?
+  region         String?
+  subRegion      String?
+  dietType       DietType?
+  createdAt      DateTime                @default(now())
+  ingredients    RecipeIngredient[]
+  macronutrients RecipeMacronutrients?
+  micronutrients RecipeMicronutrients[]
+  favorites      UserFavoriteRecipe[]
+  cookHistory    UserRecipeCookHistory[]
+  stats          UserRecipeStats[]
+}
+
+model Ingredient {
+  id        Int                @id @default(autoincrement())
+  name      String
+  category  String?
+  allergens String[]
+  recipes   RecipeIngredient[]
+}
+
+model RecipeIngredient {
+  recipeId     String
+  ingredientId Int
+  quantity     Float?
+  unit         String?
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+  recipe       Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@id([recipeId, ingredientId])
+}
+
+model RecipeMacronutrients {
+  recipeId   String @id
+  energyKcal Float?
+  proteinG   Float?
+  carbsG     Float?
+  fatsG      Float?
+  fiberG     Float?
+  sugarG     Float?
+  recipe     Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+}
+
+model RecipeMicronutrients {
+  id           Int    @id @default(autoincrement())
+  recipeId     String
+  nutrientName String
+  amount       Float
+  unit         String
+  recipe       Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@index([recipeId])
+}
+
+model UserFavoriteRecipe {
+  userId    String
+  recipeId  String
+  createdAt DateTime @default(now())
+  recipe    Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, recipeId])
+}
+
+model UserRecipeCookHistory {
+  id       Int      @id @default(autoincrement())
+  userId   String
+  recipeId String
+  cookedAt DateTime @default(now())
+  recipe   Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([recipeId])
+}
+
+model UserRecipeStats {
+  userId       String
+  recipeId     String
+  timesCooked  Int       @default(0)
+  lastCookedAt DateTime?
+  recipe       Recipe    @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, recipeId])
+}
+
+model UserMetricsHistory {
+  id         Int      @id @default(autoincrement())
+  userId     String
+  weightKg   Float
+  bmi        Float?
+  recordedAt DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+enum ActivityLevel {
+  SEDENTARY
+  LIGHTLY_ACTIVE
+  MODERATELY_ACTIVE
+  VERY_ACTIVE
+  ATHLETE
+}
+
+enum DietType {
+  VEGAN
+  PESCETARIAN
+  OVO_VEGETARIAN
+  LACTO_VEGETARIAN
+  OVO_LACTO_VEGETARIAN
+  NON_VEGETARIAN
+}
+
+enum GoalType {
+  WEIGHT_LOSS
+  MAINTENANCE
+  MUSCLE_GAIN
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum Role {
+  USER
+  ADMIN
+}
