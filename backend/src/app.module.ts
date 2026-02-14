@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { FlavorModule } from './flavor/flavor.module';
+import { ScanModule } from './scan/scan.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { FlavorModule } from './flavor/flavor.module';
     PrismaModule,
     AuthModule,
     UsersModule,
-    FlavorModule
+    FlavorModule,
+    ScanModule
   ],
   controllers: [AppController],
   providers: [AppService],
