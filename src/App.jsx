@@ -17,8 +17,6 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
-
-        {/* Onboarding Flow */}
         <Route path="/get-started" element={<ProfileSetup />} />
         <Route path="/journey" element={<Journey />} />
         <Route path="/plan-type" element={<PlanType />} />
@@ -26,9 +24,6 @@ function App() {
         <Route path="/recipes" element={<Recipes />} />
         <Route path="/recipe/:id" element={<RecipeDetail />} />
         <Route path="/smart-cart" element={<SmartCart />} />
-
-        {/* Optional fallback */}
-        <Route path="*" element={<Home />} />
       </Routes>
     </BrowserRouter>
   );

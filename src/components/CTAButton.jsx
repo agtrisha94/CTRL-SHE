@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-const CTAButton = ({ 
-  text, 
-  to = "/get-started", 
+const CTAButton = ({
+  text,
+  to = "/get-started",
   variant = "primary",
   onClick,
   icon = null,
@@ -23,23 +23,53 @@ const CTAButton = ({
     }
   };
 
+  /* ===== Variants (Cream + Orange SaaS Theme) ===== */
+
   const variants = {
-    primary: "bg-gradient-to-r from-accent to-orange-600 text-white shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 border-0",
-    secondary: "bg-white text-accent border-2 border-accent hover:bg-accent hover:text-white shadow-md hover:shadow-lg transform hover:scale-105 active:scale-95",
-    outline: "bg-transparent text-gray-700 border-2 border-gray-300 hover:border-accent hover:text-accent hover:bg-accent/5 shadow-sm hover:shadow transform hover:scale-105 active:scale-95"
+    primary: `
+      bg-gradient-to-r from-orange-500 to-orange-600 
+      text-white 
+      shadow-md hover:shadow-xl
+      hover:brightness-105
+      border border-orange-500
+    `,
+
+    secondary: `
+      bg-white 
+      text-orange-600 
+      border border-orange-200 
+      hover:bg-orange-50
+      shadow-sm hover:shadow-md
+    `,
+
+    outline: `
+      bg-transparent 
+      text-gray-700 
+      border border-gray-300 
+      hover:border-orange-400 
+      hover:text-orange-600 
+      hover:bg-orange-50/40
+      shadow-sm
+    `
   };
 
   const sizes = {
     small: "px-5 py-2.5 text-sm",
-    default: "px-8 py-4 text-base",
+    default: "px-8 py-3.5 text-base",
     large: "px-10 py-5 text-lg"
   };
 
-  const baseStyles = `relative overflow-hidden group rounded-xl font-semibold transition-all duration-300 
-    focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2
-    ${fullWidth ? 'w-full' : ''} 
-    ${disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : 'cursor-pointer'}
-    ${sizes[size] || sizes.default}`;
+  const baseStyles = `
+    relative overflow-hidden 
+    rounded-xl font-semibold 
+    transition-all duration-300 ease-in-out
+    focus:outline-none 
+    focus:ring-2 focus:ring-orange-400 focus:ring-offset-2
+    active:scale-[0.98]
+    ${fullWidth ? "w-full" : ""}
+    ${disabled ? "opacity-50 cursor-not-allowed pointer-events-none" : "cursor-pointer"}
+    ${sizes[size] || sizes.default}
+  `;
 
   return (
     <button
@@ -49,17 +79,33 @@ const CTAButton = ({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <span className="flex items-center justify-center gap-2 relative z-10">
-        {icon && <span className="transition-colors duration-300">{icon}</span>}
+      {/* Subtle Hover Glow Effect */}
+      <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/10" />
+
+      <span className="relative z-10 flex items-center justify-center gap-2">
+        {icon && (
+          <span className="transition-transform duration-300">
+            {icon}
+          </span>
+        )}
+
         {text}
+
         {variant === "primary" && (
-          <svg 
-            className={`w-5 h-5 transition-transform duration-300 ${isHovered ? 'translate-x-1' : ''}`} 
-            fill="none" 
-            stroke="currentColor" 
+          <svg
+            className={`w-4 h-4 transition-transform duration-300 ${
+              isHovered ? "translate-x-1" : ""
+            }`}
+            fill="none"
+            stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M13 7l5 5m0 0l-5 5m5-5H6"
+            />
           </svg>
         )}
       </span>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { User, Target, MapPin, Utensils } from "lucide-react";
 
 import ProgressBar from "../components/form/ProgressBar";
 import InputField from "../components/form/InputField";
@@ -38,28 +39,38 @@ const ProfileSetup = () => {
       setError("Please fill all required fields.");
       return;
     }
-
     setError("");
     navigate("/journey");
   };
 
   return (
-    <section className="min-h-screen bg-gray-50 pt-28 pb-20 px-4 sm:px-6 lg:px-8">
+    <section className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-50 pt-32 pb-24 px-4 sm:px-6 lg:px-8">
 
-      <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-xl p-8 sm:p-10">
+      <div className="max-w-4xl mx-auto bg-white/90 backdrop-blur-md rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.05)] border border-orange-100 p-8 sm:p-12">
 
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Profile Setup
-          </h1>
-          <div className="mt-4">
+        <div className="mb-10">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="bg-orange-100 text-orange-600 p-2 rounded-lg">
+              <User size={20} />
+            </div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Build Your Profile
+            </h1>
+          </div>
+
+          <p className="text-gray-500 text-sm">
+            Help us personalize your molecular nutrition journey.
+          </p>
+
+          <div className="mt-6">
             <ProgressBar step={1} total={3} />
           </div>
         </div>
 
         {/* Basic Info */}
         <div className="grid md:grid-cols-2 gap-6">
+
           <InputField
             label="Age *"
             type="number"
@@ -80,12 +91,13 @@ const ProfileSetup = () => {
         </div>
 
         {/* Gender */}
-        <div className="mt-8">
-          <label className="block text-sm text-gray-600 mb-3">
+        <div className="mt-10">
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-4">
+            <User size={16} className="text-orange-500" />
             Gender
           </label>
 
-          <div className="inline-flex bg-gray-100 rounded-xl p-1">
+          <div className="inline-flex bg-orange-50 border border-orange-100 rounded-xl p-1">
             {["Male", "Female", "Other"].map((g) => (
               <button
                 key={g}
@@ -93,8 +105,8 @@ const ProfileSetup = () => {
                 onClick={() => setForm({ ...form, gender: g })}
                 className={`px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                   form.gender === g
-                    ? "bg-white shadow text-gray-900"
-                    : "text-gray-500 hover:text-gray-700"
+                    ? "bg-white shadow text-orange-600"
+                    : "text-gray-500 hover:text-gray-800"
                 }`}
               >
                 {g}
@@ -104,8 +116,9 @@ const ProfileSetup = () => {
         </div>
 
         {/* Fitness Goal */}
-        <div className="mt-8">
-          <label className="block text-sm text-gray-600 mb-2">
+        <div className="mt-10">
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-4">
+            <Target size={16} className="text-orange-500" />
             Fitness Goal
           </label>
 
@@ -115,7 +128,7 @@ const ProfileSetup = () => {
               onChange={(e) =>
                 setForm({ ...form, goal: e.target.value })
               }
-              className="w-full appearance-none bg-gray-100 px-5 py-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
+              className="w-full appearance-none bg-orange-50 border border-orange-200 px-5 py-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
             >
               <option>Weight Loss</option>
               <option>Muscle Gain</option>
@@ -125,15 +138,16 @@ const ProfileSetup = () => {
               <option>General Fitness</option>
             </select>
 
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-orange-500">
               ▼
             </div>
           </div>
         </div>
 
         {/* City */}
-        <div className="mt-8">
-          <label className="block text-sm text-gray-600 mb-2">
+        <div className="mt-10">
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-4">
+            <MapPin size={16} className="text-orange-500" />
             City *
           </label>
 
@@ -143,7 +157,7 @@ const ProfileSetup = () => {
               onChange={(e) =>
                 setForm({ ...form, city: e.target.value })
               }
-              className="w-full appearance-none bg-gray-100 px-5 py-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition"
+              className="w-full appearance-none bg-orange-50 border border-orange-200 px-5 py-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
             >
               <option value="">Select City</option>
               <option>Delhi</option>
@@ -154,19 +168,21 @@ const ProfileSetup = () => {
               <option>Chandigarh</option>
             </select>
 
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-orange-500">
               ▼
             </div>
           </div>
         </div>
 
-        {/* Dietary Preferences */}
-        <div className="mt-12">
-          <h2 className="font-semibold text-lg text-gray-900 mb-6">
+        {/* Divider */}
+        <div className="mt-14 border-t border-orange-100 pt-10">
+
+          <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-900 mb-6">
+            <Utensils size={18} className="text-orange-500" />
             Dietary Preferences
           </h2>
 
-          <div className="space-y-4">
+          <div className="space-y-5">
             <ToggleSwitch
               label="Vegetarian"
               checked={form.vegetarian}
@@ -203,7 +219,7 @@ const ProfileSetup = () => {
 
         {/* Allergies */}
         <div className="mt-12">
-          <h2 className="font-semibold text-lg text-gray-900 mb-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-6">
             Allergies & Restrictions
           </h2>
 
@@ -229,11 +245,11 @@ const ProfileSetup = () => {
         )}
 
         {/* Continue */}
-        <div className="mt-12">
+        <div className="mt-14">
           <button
             type="button"
             onClick={handleContinue}
-            className="w-full md:w-auto bg-gradient-to-r from-orange-400 to-orange-600 text-white px-10 py-4 rounded-xl font-semibold shadow-lg hover:scale-105 active:scale-95 transition-all duration-200"
+            className="w-full md:w-auto bg-gradient-to-r from-orange-500 to-orange-600 text-white px-12 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200"
           >
             Continue →
           </button>
