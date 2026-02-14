@@ -14,17 +14,40 @@ export class UsersService {
   private readonly nutritionService: NutritionService,) {}
 
   async findById(id: string) {
-    return this.prisma.user.findUnique({
-      where: { id },
-      select: {
-        id: true,
-        email: true,
-        role: true,
-        isProfileComplete: true,
-        createdAt: true,
-      },
-    });
+  const user = await this.prisma.user.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      email: true,
+      role: true,
+      createdAt: true,
+      isProfileComplete: true,
+
+      // Profile fields
+      name: true,
+      age: true,
+      gender: true,
+      heightCm: true,
+      weightKg: true,
+      activityLevel: true,
+      goalType: true,
+      dietType: true,
+      country: true,
+      defaultCuisine: true,
+      allergies: true,
+      diseases: true,
+    },
+  });
+
+  if (!user) {
+    throw new NotFoundException('User not found');
   }
+
+  return user;
+}
+
+
+  
 
   async completeProfile(userId: string, dto: CompleteProfileDto) {
   const user = await this.prisma.user.findUnique({
