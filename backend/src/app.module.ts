@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { FlavorModule } from './flavor/flavor.module';
 import { ScanModule } from './scan/scan.module';
+import { CosylabModule } from './cosylab/cosylab.module';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { ScanModule } from './scan/scan.module';
     AuthModule,
     UsersModule,
     FlavorModule,
-    ScanModule
+    ScanModule,
+    CosylabModule,
   ],
   controllers: [AppController],
   providers: [AppService],
