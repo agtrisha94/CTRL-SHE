@@ -25,20 +25,27 @@ const Navbar = () => {
 
   const isHome = location.pathname === "/";
 
-const steps = [
-  { path: "/get-started", label: "Profile", step: 1 },
-  { path: "/journey", label: "Journey", step: 2 },
-  { path: "/plan-type", label: "Plan", step: 3 },
-  { path: "/diet-plan", label: "Diet", step: 4 },
-  { path: "/recipes", label: "Recipes", step: 5 },
-  { path: "/smart-cart", label: "Cart", step: 6 }
-];
+  const steps = [
+    { path: "/get-started", label: "Profile", step: 1 },
+    { path: "/journey", label: "Journey", step: 2 },
+    { path: "/plan-type", label: "Plan", step: 3 },
+    { path: "/recipes", label: "Recipes", step: 4 },
+    { path: "/smart-cart", label: "Cart", step: 5 },
+  ];
 
   const currentStepIndex = steps.findIndex((step) =>
-    location.pathname.startsWith(step.path)
+    location.pathname.startsWith(step.path),
   );
 
   const isOnboarding = currentStepIndex !== -1;
+
+  // ✅ Smooth Scroll
+  const scrollToSection = (id) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
 
   return (
     <nav
@@ -50,10 +57,8 @@ const steps = [
     >
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between">
-
           {/* LEFT */}
           <div className="flex items-center gap-6">
-
             {!isHome && (
               <button
                 onClick={() => navigate(-1)}
@@ -80,7 +85,7 @@ const steps = [
               to="/"
               className="text-xl font-bold tracking-tight bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent"
             >
-              NutriMolecular
+              FoodoFit
             </Link>
           </div>
 
@@ -88,26 +93,24 @@ const steps = [
           {isHome && (
             <div className="hidden md:flex items-center gap-10 text-sm font-medium text-gray-600">
               {[
-                { name: "Features", id: "features" },
-                { name: "How It Works", id: "how-it-works" },
-                { name: "Pricing", id: "pricing" },
-                { name: "About", id: "about" }
+                { name: "Features", id: "how-it-works" }, // ✅ User Journey
+                { name: "How It Works", id: "features" },
+                { name: "About", id: "about" },
               ].map((item) => (
-                <a
+                <button
                   key={item.id}
-                  href={`#${item.id}`}
-                  className="relative hover:text-orange-500 transition"
+                  onClick={() => scrollToSection(item.id)}
+                  className="relative group hover:text-orange-500 transition"
                 >
                   {item.name}
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-orange-500 transition-all duration-300 hover:w-full"></span>
-                </a>
+                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-orange-500 transition-all duration-300 group-hover:w-full"></span>
+                </button>
               ))}
             </div>
           )}
 
           {/* RIGHT */}
           <div className="flex items-center gap-5">
-
             {/* GET STARTED */}
             {isHome && !hasStarted && (
               <Link
@@ -127,7 +130,6 @@ const steps = [
 
                   return (
                     <div key={step.path} className="flex items-center">
-
                       {index > 0 && (
                         <div
                           className={`w-8 h-[2px] ${
@@ -176,12 +178,12 @@ const steps = [
                     d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
                   />
                 </svg>
+
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-orange-500 text-white text-xs rounded-full flex items-center justify-center shadow">
                   0
                 </span>
               </Link>
             )}
-
           </div>
         </div>
       </div>

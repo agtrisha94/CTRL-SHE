@@ -3,12 +3,13 @@ import Navbar from "./components/Navbar";
 
 import Home from "./pages/Home";
 import ProfileSetup from "./pages/ProfileSetup";
-import Journey from "./pages/Journey";
 import PlanType from "./pages/PlanType";
 import DietPlan from "./pages/DietPlan";
 import Recipes from "./pages/Recipes";
 import RecipeDetail from "./pages/RecipeDetail";
 import SmartCart from "./pages/SmartCart";
+import Login from "./pages/Login";
+import NutritionDashboard from "./pages/Journey";
 
 function App() {
   return (
@@ -18,7 +19,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/get-started" element={<ProfileSetup />} />
-        <Route path="/journey" element={<Journey />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/journey" element={<NutritionDashboard />} />
         <Route path="/plan-type" element={<PlanType />} />
         <Route path="/diet-plan" element={<DietPlan />} />
         <Route path="/recipes" element={<Recipes />} />
