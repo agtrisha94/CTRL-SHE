@@ -1,6 +1,5 @@
 import {
   Injectable,
-  NotFoundException,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
@@ -10,126 +9,72 @@ import axios from 'axios';
 export class FlavorService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getSwapSuggestions(food: string, userId: string) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: userId },
-    });
-
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
+  async getSwapSuggestions(ingredient: string) {
     try {
+      // 1️⃣ Ask FlavorDB for similar entities
       const response = await axios.get(
-  `${process.env.FLAVORDB_BASE_URL}/food/by-alias`,
-  {
-    params: {
-      food_pair: food,
-    },
-    headers: {
-      Authorization: `Bearer ${process.env.FLAVORDB_API_TOKEN}`,
-    },
-  },
-);
+        `${process.env.FLAVORDB_BASE_URL}/food/by-alias`,
+        {
+          params: { food_pair: ingredient },
+          headers: {
+            Authorization: `Bearer ${process.env.FLAVORDB_API_TOKEN}`,
+          },
+        },
+      );
 
+      const similarEntities = response.data?.topSimilarEntities;
 
-      const similar = response.data?.topSimilarEntities;
-
-      if (!similar || similar.length === 0) {
-        return [];
+      if (!Array.isArray(similarEntities) || similarEntities.length === 0) {
+        return { ingredient, swaps: [] };
       }
 
-      const names = similar.map((item: any) => item.entityName);
+      // 2️⃣ Get names from FlavorDB
+      const candidateNames = similarEntities.map(
+        (item: any) => item.entityName,
+      );
 
-    //   const ingredients = await this.prisma.ingredient.findMany({
-    //     where: {
-    //       name: {
-    //         in: names,
-    //         mode: 'insensitive',
-    //       },
-    //     },
-    //   });
-    const ingredients = await this.prisma.ingredient.findMany({
-  where: {
-    OR: names.map(name => ({
-      name: {
-        contains: name,
-        mode: 'insensitive',
-      },
-    })),
-  },
-});
+      // 3️⃣ Try to match with DB (best effort, not mandatory)
+      const dbIngredients = await this.prisma.ingredient.findMany({
+        where: {
+          OR: candidateNames.map((name) => ({
+            name: {
+              contains: name,
+              mode: 'insensitive',
+            },
+          })),
+        },
+      });
 
-console.log(names);
-
-      const results = similar
+      // 4️⃣ Build swaps — NO HARD FILTERING
+      const swaps = similarEntities
         .map((item: any) => {
-          const match = ingredients.find(
+          const dbMatch = dbIngredients.find(
             (i) =>
-              i.name.toLowerCase() ===
-              item.entityName.toLowerCase(),
+              i.name.toLowerCase() === item.entityName.toLowerCase(),
           );
 
-          if (!match) return null;
-
-          // Allergy filter
-          if (
-            user.allergies &&
-            user.allergies.includes(match.name)
-          ) {
-            return null;
-          }
-
-          // Basic diet filter
-          if (user.dietType === 'VEGAN') {
-            const forbiddenCategories = [
-              'meat',
-              'fish',
-              'egg',
-              'dairy',
-            ];
-
-            if (
-              match.category &&
-              forbiddenCategories.includes(
-                match.category.toLowerCase(),
-              )
-            ) {
-              return null;
-            }
-          }
-
-          const score = item.similarMolecules;
-
-          let confidence = 'LOW';
-          if (score > 160) confidence = 'HIGH';
-          else if (score > 140) confidence = 'MEDIUM';
-
           return {
-            id: match.id,
-            name: match.name,
-            category: match.category,
-            similarityScore: score,
-            confidence,
-            reason: `Shares ${score} flavor molecules with ${food}`,
+            id: dbMatch?.id ?? null,
+            name: dbMatch?.name ?? item.entityName,
+            category: dbMatch?.category ?? null,
+            similarityScore: item.similarMolecules ?? 0,
+            reason: `Flavor-similar alternate for ${ingredient}`,
           };
         })
-        .filter(Boolean)
         .sort(
           (a: any, b: any) =>
             b.similarityScore - a.similarityScore,
         )
         .slice(0, 8);
-const count = await this.prisma.ingredient.count();
-console.log("Total ingredients in DB:", count);
-      return results;
+
+      return {
+        ingredient,
+        swaps,
+      };
     } catch (error) {
       throw new InternalServerErrorException(
-        'Flavor service temporarily unavailable',
+        'Flavor swap service unavailable',
       );
-      
     }
-    
-
   }
 }
